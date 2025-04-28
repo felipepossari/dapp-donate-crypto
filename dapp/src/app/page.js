@@ -1,7 +1,29 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { login } from "@/services/web3Service";
 
 export default function Home() {
+
+  const { push } = useRouter();
+  const [message, setMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  function btnLoginClick() {
+    setMessage("Connecting to wallet...");
+    login()
+      .then(() => {
+        setMessage("Connected!");
+        push('/create');
+      })
+      .catch((err) => {
+        console.log(err);
+        setErrorMessage(err.message);
+      });
+    
+  }
+
   return (
     <>
       <div className="container px-4 py-5">
@@ -15,11 +37,21 @@ export default function Home() {
             <p className="lead">Sign in with your wallet and create our campaigns</p>
             <p className="lead mb-3">For donations, please use the campaign link</p>
             <div className="d-flex justify-content-start mt-5">
-              <button className="btn btn-primary btn-lg px-4 me-2">
+              <button className="btn btn-primary btn-lg px-4 me-2" onClick={btnLoginClick}>
                 <img src="/metamask.svg" alt="metamask" width="64" height="64" />
                 Connect Wallet
               </button>
             </div>
+            {
+              message ?
+                <div className="alert alert-success p-3 col-12 mt-3" role="alert">{message}</div> :
+                <></>
+            }
+            {
+              errorMessage ?
+                <div className="alert alert-danger p-3 col-12 mt-3" role="alert">{errorMessage}</div> :
+                <></>
+            }
           </div>
         </div>
       </div>
