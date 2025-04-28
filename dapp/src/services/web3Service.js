@@ -34,3 +34,14 @@ export async function nextId() {
     const contract = getContract();
     return contract.methods.nextId().call();
 }
+
+export async function getCampaing(id) {
+    const contract = getContract();
+    return contract.methods.campaings(id).call();
+}
+
+export async function donate(id, amount) {
+    await login();
+    const contract = getContract();
+    return contract.methods.donate(id).send({ value: Web3.utils.toWei(amount, 'ether') });
+}
